@@ -1,0 +1,16 @@
+{
+    "name": "abiodunsulaiman694/php-zoopla",
+    "description": "Zoopla API with PHP",
+    "homepage": "https://github.com/abiodunsulaiman694",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Abiodun Sulaiman",
+            "email": "hello@abiodun.me"
+        }
+    ],
+    "require": {
+        "php": "^7.3"
+    }
+}
