@@ -246,22 +246,18 @@ if($_POST){
         <tr>
             <td>For Sale/Rent</td>
             <td>
-            	<select name="purpose" class="form-control">
-            		<option value="sale"
-            		<?php
-            		if ($property->purpose === "sale") {
-            			echo "selected";
-            		}
-            		?>
-            		>For Sale</option>
-            		<option value="rent"
-            		<?php
-            		if ($property->purpose === "rent") {
-            			echo "selected";
-            		}
-            		?>
-            		>For Rent</option>
-            	</select>
+                For Sale
+                <input type="radio" name="purpose" required="" value="sale" <?php
+                    if ($property->purpose === "sale") {
+                        echo "checked";
+                    }
+                    ?>>
+                For Rent
+                <input type="radio" name="purpose" required="" value="rent" <?php
+                    if ($property->purpose === "rent") {
+                        echo "checked";
+                    }
+                    ?>>
             </td>
         </tr>
  

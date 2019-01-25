@@ -147,10 +147,10 @@ if($_POST){
         <tr>
             <td>For Sale/Rent</td>
             <td>
-            	<select name='purpose' class='form-control' required=''>
-            		<option value="sale">For Sale</option>
-            		<option value="rent">For Rent</option>
-            	</select>
+                For Sale
+                <input type="radio" name="purpose" required="" value="sale">
+                For Rent
+                <input type="radio" name="purpose" required="" value="rent">
             </td>
         </tr>
  

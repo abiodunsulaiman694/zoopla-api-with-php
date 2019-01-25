@@ -66,7 +66,7 @@ if($total_rows>0){
                     echo "
                      
                     <a href='update_property.php?id={$id}' class='btn btn-info left-margin'>
-                        <span class='glyphicon glyphicon-edit'></span> Update
+                        <span class='glyphicon glyphicon-pencil'></span> Edit
                     </a>
                      
                     <a delete-id='{$id}' class='btn btn-danger delete-object'>
