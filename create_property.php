@@ -14,7 +14,7 @@ $page_title = "Create Property";
 include_once "partials/header.php";
  
 echo "<div class='right-button-margin'>";
-    echo "<a href='index.php' class='btn btn-default pull-right'>View Properties</a>";
+    echo "<a href='index.php' class='btn btn-default pull-right'>View All Properties</a>";
 echo "</div>";
  
 ?>
@@ -35,9 +35,10 @@ if($_POST){
     $property->purpose = $_POST['purpose'];
 
     $image=!empty($_FILES["image"]["name"])
-        ? sha1_file($_FILES['image']['tmp_name']) . "-" . basename($_FILES["image"]["name"]) : "";
+        ? sha1_file($_FILES['image']['tmp_name']) . uniqid(). "-" . basename($_FILES["image"]["name"]) : "";
 
 	$property->image = $image;
+    $property->thumbnail_url = $image;
     // create property
     if($property->create()){
         echo "<div class='alert alert-success'>Property was created.</div>";
@@ -51,7 +52,7 @@ if($_POST){
     }
 }
 ?>
- <div class="text-danger text-center">
+ <div class="text-info text-center">
      *All fields are required.
  </div>
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">

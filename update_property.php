@@ -50,6 +50,7 @@ if($_POST){
     if(!empty($_FILES["image"]["name"])) {
         $image = sha1_file($_FILES['image']['tmp_name']) . "-" . basename($_FILES["image"]["name"]);
 		$property->image = $image;
+        $property->thumbnail_url = $image;
     }
 
     // update the product
@@ -75,7 +76,7 @@ if($_POST){
     }
 }
 ?>
- <div class="text-danger text-center">
+ <div class="text-info text-center">
      *All fields, except image, are required.
  </div>
 
@@ -117,7 +118,7 @@ if($_POST){
             <td>
             	Image
             	<?php
-            		echo $property->image ? "<img src='uploads/{$property->image}' style='height:50px;' />" : "";
+            		echo $property->thumbnail_url ? "<img src='thumbs/{$property->thumbnail_url}' />" : "";
             	?>
         	</td>
             <td><input type='file' name='image' class='form-control' /></td>

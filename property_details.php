@@ -112,7 +112,13 @@ echo "<table class='table table-hover table-responsive table-bordered'>";
     echo "<tr>";
     echo "<td>Image</td>";
     echo "<td>";
-        echo $property->image ? "<img src='{$property->image}' style='width:300px;' />" : "No image found.";
+    if ($property->image && $property->source == "api") {
+        echo "<img src='{$property->image}' style='width:300px;' />";
+    } else if ($property->image && $property->source == "admin") {
+        echo "<img src='uploads/{$property->image}' style='width:300px;' />";
+    } else {
+        echo "No image found.";
+    }
     echo "</td>";
 echo "</tr>";
  

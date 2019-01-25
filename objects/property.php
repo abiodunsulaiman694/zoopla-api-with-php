@@ -39,7 +39,7 @@ class Property{
         $error_message = "";
         if (trim($this->county == "") || trim($this->country == "") || trim($this->town == "") || trim($this->postcode == "") || trim($this->description == "") || trim($this->displayable_address == "") || trim($this->bedrooms == "") || trim($this->bathrooms == "") || trim($this->price == "") || trim($this->type == "") || trim($this->purpose == "") || trim($this->source == "") || trim($this->image == "")) {
 
-            $error_message .= "<div>All fields are required</div>";
+            //$error_message .= "<div>All fields are required</div>";
         }
         if ($error_message != "") {
             return false;
@@ -62,7 +62,8 @@ class Property{
                     type=:type,
                     purpose=:purpose,
                     source=:source,
-                    image=:image";
+                    image=:image,
+                    thumbnail_url=:thumbnail_url";
         } else {
             $query = "INSERT INTO
                     " . $this->table_name . "
@@ -98,7 +99,8 @@ class Property{
         $this->purpose=htmlspecialchars(strip_tags($this->purpose));
         $this->source = 'admin';
         if (isset($this->image) && ($this->image != "")) {
-            $this->image='uploads/'.htmlspecialchars(strip_tags($this->image));
+            $this->image=htmlspecialchars(strip_tags($this->image));
+            $this->thumbnail_url=htmlspecialchars(strip_tags($this->thumbnail_url));
         }
         // bind values 
         $stmt->bindParam(":county", $this->county);
@@ -115,6 +117,7 @@ class Property{
         $stmt->bindParam(":source", $this->source);
         if (isset($this->image) && ($this->image != "")) {
             $stmt->bindParam(":image", $this->image);
+            $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
         }
  
         if($stmt->execute()){
@@ -300,7 +303,8 @@ class Property{
                     price=:price,
                     type=:type,
                     purpose=:purpose,
-                    image=:image
+                    image=:image,
+                    thumbnail_url=:thumbnail_url
                 WHERE
                     id = :id
                     AND source = :source
@@ -321,7 +325,8 @@ class Property{
         $this->price=$this->clean_numbers(htmlspecialchars(strip_tags($this->price)))*100;
         $this->type=htmlspecialchars(strip_tags($this->type));
         $this->purpose=htmlspecialchars(strip_tags($this->purpose));
-        $this->image='uploads/'.htmlspecialchars(strip_tags($this->image));
+        $this->image=htmlspecialchars(strip_tags($this->image));
+        $this->thumbnail_url=htmlspecialchars(strip_tags($this->thumbnail_url));
         $this->id=htmlspecialchars(strip_tags($this->id));
         $this->source='admin';
      
@@ -338,6 +343,7 @@ class Property{
         $stmt->bindParam(":type", $this->type);
         $stmt->bindParam(":purpose", $this->purpose);
         $stmt->bindParam(":image", $this->image);
+        $stmt->bindParam(":thumbnail_url", $this->thumbnail_url);
         $stmt->bindParam(':id', $this->id);
         $stmt->bindParam(":source", $this->source);
      
@@ -423,16 +429,16 @@ class Property{
     // delete the property
     function delete(){
      
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ? AND source = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
          
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
-        $stmt->bindParam(2, 'admin');
      
         if($result = $stmt->execute()){
             return true;
         }else{
             return false;
+            var_dump("hi");
         }
     }
     // read properties by search term
@@ -509,11 +515,12 @@ class Property{
      
         // now, if image is not empty, try to upload the image
         if($this->image && $this->image != ""){
-     
-            // sha1_file() function is used to make a unique file name
+
             $target_directory = "uploads/";
+            $thumb_directory = "thumbs/";
             $target_file = $target_directory . $this->image;
             $file_type = pathinfo($target_file, PATHINFO_EXTENSION);
+            $thumb_file = $thumb_directory . $this->image;
      
             // error message is empty
             $file_upload_error_messages="";
@@ -552,6 +559,7 @@ class Property{
                 // upload image
                 if(move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)){
                     // image successfully uploaded
+                    $this->createThumbnail($target_file, $thumb_file);
                 }else{
                     $result_message.="<div class='alert alert-danger'>";
                         $result_message.="<div>Unable to upload image.</div>";
@@ -572,6 +580,51 @@ class Property{
         }
      
         return $result_message;
+    }
+
+    function createThumbnail($filepath, $thumbpath, $thumbnail_width = 80, $thumbnail_height = 60, $background=false) {
+        list($original_width, $original_height, $original_type) = getimagesize($filepath);
+        if ($original_width > $original_height) {
+            $new_width = $thumbnail_width;
+            $new_height = intval($original_height * $new_width / $original_width);
+        } else {
+            $new_height = $thumbnail_height;
+            $new_width = intval($original_width * $new_height / $original_height);
+        }
+        $dest_x = intval(($thumbnail_width - $new_width) / 2);
+        $dest_y = intval(($thumbnail_height - $new_height) / 2);
+
+        if ($original_type === 1) {
+            $imgt = "ImageGIF";
+            $imgcreatefrom = "ImageCreateFromGIF";
+        } else if ($original_type === 2) {
+            $imgt = "ImageJPEG";
+            $imgcreatefrom = "ImageCreateFromJPEG";
+        } else if ($original_type === 3) {
+            $imgt = "ImagePNG";
+            $imgcreatefrom = "ImageCreateFromPNG";
+        } else {
+            return false;
+        }
+
+        $old_image = $imgcreatefrom($filepath);
+        $new_image = imagecreatetruecolor($thumbnail_width, $thumbnail_height); // creates new image, but with a black background
+
+        // figuring out the color for the background
+        if(is_array($background) && count($background) === 3) {
+          list($red, $green, $blue) = $background;
+          $color = imagecolorallocate($new_image, $red, $green, $blue);
+          imagefill($new_image, 0, 0, $color);
+        // apply transparent background only if is a png image
+        } else if($background === 'transparent' && $original_type === 3) {
+          imagesavealpha($new_image, TRUE);
+          $color = imagecolorallocatealpha($new_image, 0, 0, 0, 127);
+          imagefill($new_image, 0, 0, $color);
+        }
+
+        imagecopyresampled($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_width, $new_height, $original_width, $original_height);
+        $imgt($new_image, $thumbpath);
+        return file_exists($thumbpath);
     }
 
 }

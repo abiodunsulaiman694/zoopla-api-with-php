@@ -34,8 +34,12 @@ if($total_rows>0){
  
             echo "<tr>";
                 echo "<td>";
-                if ($thumbnail_url) {
+                if ($thumbnail_url && $source == "api") {
                     echo '<img src="'.$thumbnail_url.'" />';
+                } else if ($thumbnail_url && $source == "admin") {
+                    echo '<img src="thumbs/'.$thumbnail_url.'" />';
+                } else {
+                    echo "No thumbnail found";   
                 }
                 "</td>";
                 echo "<td>{$town}/{$county}/{$country}</td>";
