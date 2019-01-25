@@ -26,12 +26,16 @@ echo "<div class='right-button-margin'>";
     echo "<a href='index.php' class='btn btn-primary pull-right'>";
         echo "<span class='glyphicon glyphicon-list'></span>All Properties";
     echo "</a>";
-    echo "&nbsp;<a href='update_property.php?id={$id}' class='btn btn-info '>";
-        echo "<span class='glyphicon glyphicon-list'></span>Update Property";
-    echo "</a>";
-    echo "<a delete-id='{$id}' class='btn btn-danger delete-object'>
-				    <span class='glyphicon glyphicon-remove'></span> Delete
-				</a>";
+    if ($property->source == "admin") {
+        echo "&nbsp;<a href='update_property.php?id={$id}' class='btn btn-info '>";
+        echo "<span class='glyphicon glyphicon-pencil'></span>Update Property";
+        echo "</a>";
+        echo "<a delete-id='{$id}' class='btn btn-danger delete-object'>
+                    <span class='glyphicon glyphicon-remove'></span> Delete
+            </a>";
+    }
+    
+
 echo "</div>";
 
 // HTML table for displaying a property details
