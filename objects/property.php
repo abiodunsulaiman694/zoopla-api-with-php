@@ -35,6 +35,15 @@ class Property{
     }
  
     function create(){
+
+        $error_message = "";
+        if (trim($this->county == "") || trim($this->country == "") || trim($this->town == "") || trim($this->postcode == "") || trim($this->description == "") || trim($this->displayable_address == "") || trim($this->bedrooms == "") || trim($this->bathrooms == "") || trim($this->price == "") || trim($this->type == "") || trim($this->purpose == "") || trim($this->source == "") || trim($this->image == "")) {
+
+            $error_message .= "<div>All fields are required</div>";
+        }
+        if ($error_message != "") {
+            return false;
+        }
  
         //sql
         if (isset($this->image) && ($this->image != "")) {
@@ -269,6 +278,13 @@ class Property{
         return $row;
     }
     function update(){
+        if (trim($this->county == "") || trim($this->country == "") || trim($this->town == "") || trim($this->postcode == "") || trim($this->description == "") || trim($this->displayable_address == "") || trim($this->bedrooms == "") || trim($this->bathrooms == "") || trim($this->price == "") || trim($this->type == "") || trim($this->purpose == "") || trim($this->source == "")) {
+            
+            $result_message .= "<div>All fields, except image, are required</div>";
+        }
+        if (!empty($error_message)) {
+            return $error_message;
+        }
  
         $query = "UPDATE
                     " . $this->table_name . "
@@ -284,10 +300,11 @@ class Property{
                     price=:price,
                     type=:type,
                     purpose=:purpose,
-                    source=:source,
                     image=:image
                 WHERE
-                    id = :id";
+                    id = :id
+                    AND source = :source
+                    ";
      
         $stmt = $this->conn->prepare($query);
      
@@ -304,9 +321,9 @@ class Property{
         $this->price=$this->clean_numbers(htmlspecialchars(strip_tags($this->price)))*100;
         $this->type=htmlspecialchars(strip_tags($this->type));
         $this->purpose=htmlspecialchars(strip_tags($this->purpose));
-        $this->source = 'admin';
         $this->image='uploads/'.htmlspecialchars(strip_tags($this->image));
         $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->source='admin';
      
         // bind parameters
         $stmt->bindParam(":county", $this->county);
@@ -320,9 +337,9 @@ class Property{
         $stmt->bindParam(":price", $this->price);
         $stmt->bindParam(":type", $this->type);
         $stmt->bindParam(":purpose", $this->purpose);
-        $stmt->bindParam(":source", $this->source);
         $stmt->bindParam(":image", $this->image);
         $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(":source", $this->source);
      
         // execute the query
         if($stmt->execute()){
@@ -352,7 +369,8 @@ class Property{
                     type=:type,
                     purpose=:purpose
                 WHERE
-                    listing_id = :listing_id";
+                    listing_id = :listing_id
+                    AND source = :source";
      
         $stmt = $this->conn->prepare($query);
      
@@ -374,6 +392,7 @@ class Property{
         $this->type=htmlspecialchars(strip_tags($this->type));
         $this->purpose=htmlspecialchars(strip_tags($this->purpose));
         $this->listing_id=htmlspecialchars(strip_tags($this->listing_id));
+        $this->source = 'api';
      
         // bind parameters
         $stmt->bindParam(":county", $this->county);
@@ -392,6 +411,7 @@ class Property{
         $stmt->bindParam(":type", $this->type);
         $stmt->bindParam(":purpose", $this->purpose);
         $stmt->bindParam(":listing_id", $this->listing_id);
+        $stmt->bindParam(":source", $this->source);
      
         // execute the query
         if($stmt->execute()){
@@ -403,10 +423,11 @@ class Property{
     // delete the property
     function delete(){
      
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ? AND source = ?";
          
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(2, 'admin');
      
         if($result = $stmt->execute()){
             return true;
@@ -528,9 +549,9 @@ class Property{
             }
             // if $file_upload_error_messages is still empty
             if(empty($file_upload_error_messages)){
-                // it means there are no errors, so try to upload the file
+                // upload image
                 if(move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)){
-                    // it means image was uploaded
+                    // image successfully uploaded
                 }else{
                     $result_message.="<div class='alert alert-danger'>";
                         $result_message.="<div>Unable to upload image.</div>";

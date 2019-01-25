@@ -70,11 +70,14 @@ if($_POST){
     // if unable to update the product, tell the user
     else{
         echo "<div class='alert alert-danger alert-dismissable'>";
-            echo "Unable to update product.";
+            echo "Unable to update product. All fields, except, image, are required.";
         echo "</div>";
     }
 }
 ?>
+ <div class="text-danger text-center">
+     *All fields, except image, are required.
+ </div>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id={$id}");?>" method="post" enctype="multipart/form-data">
 
@@ -159,27 +162,82 @@ if($_POST){
             <td>Property Type</td>
             <td>
             	<select name="type" class="form-control">
-            		<option value="Apartment"
-            		<?php
-            		if ($property->type === "Apartment") {
-            			echo "selected";
-            		}
-            		?>
-            		>Apartment</option>
-            		<option value="Bungalow"
-            		<?php
-            		if ($property->type === "Bungalow") {
-            			echo "selected";
-            		}
-            		?>
-            		>Bungalow</option>
-            		<option value="Luxury"
-            		<?php
-            		if ($property->type === "Luxury") {
-            			echo "selected";
-            		}
-            		?>
-            		>Luxury</option>
+
+                    <option value="Terraced" <?php
+                    if ($property->type == "Terraced") {
+                        echo "selected";
+                    } ?>
+                    >Terraced</option>
+                    <option value="End of terrace" <?php
+                    if ($property->type == "End of terrace") {
+                        echo "selected";
+                    } ?>
+                    >End of terrace</option>
+                    <option value="Semi-detached" <?php
+                    if ($property->type == "Semi-detached") {
+                        echo "selected";
+                    } ?>
+                    >Semi-detached</option>
+                    <option value="Detached" <?php
+                    if ($property->type == "Detached") {
+                        echo "selected";
+                    } ?>
+                    >Detached</option>
+                    <option value="Mews house" <?php
+                    if ($property->type == "Mews house") {
+                        echo "selected";
+                    } ?>
+                    >Mews house</option>
+                    <option value="Flat" <?php
+                    if ($property->type == "Flat") {
+                        echo "selected";
+                    } ?>
+                    >Flat</option>
+                    <option value="Maisonette" <?php
+                    if ($property->type == "Maisonette") {
+                        echo "selected";
+                    } ?>
+                    >Maisonette</option>
+                    <option value="Bungalow" <?php
+                    if ($property->type == "Bungalow") {
+                        echo "selected";
+                    } ?>
+                    >Bungalow</option>
+                    <option value="Town house" <?php
+                    if ($property->type == "Town house") {
+                        echo "selected";
+                    } ?>
+                    >Town house</option>
+                    <option value="Cottage" <?php
+                    if ($property->type == "Cottage") {
+                        echo "selected";
+                    } ?>
+                    >Cottage</option>
+                    <option value="Mobile/static" <?php
+                    if ($property->type == "Mobile/static") {
+                        echo "selected";
+                    } ?>
+                    >Mobile/static</option>
+                    <option value="Land" <?php
+                    if ($property->type == "Land") {
+                        echo "selected";
+                    } ?>
+                    >Land</option>
+                    <option value="Studio" <?php
+                    if ($property->type == "Studio") {
+                        echo "selected";
+                    } ?>
+                    >Studio</option>
+                    <option value="Block of flats" <?php
+                    if ($property->type == "Block of flats") {
+                        echo "selected";
+                    } ?>
+                    >Block of flats</option>
+                    <option value="Office" <?php
+                    if ($property->type == "Office") {
+                        echo "selected";
+                    } ?>
+                    >Office</option>
             	</select>
             </td>
         </tr>
